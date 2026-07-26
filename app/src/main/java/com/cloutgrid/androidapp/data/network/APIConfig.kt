@@ -11,6 +11,6 @@ enum class ApiConfig(val baseURL: String, val socketURL: String) {
     );
 
     companion object {
-        val current: ApiConfig = DEVELOPMENT
+        val current: ApiConfig = PRODUCTION
     }
 }

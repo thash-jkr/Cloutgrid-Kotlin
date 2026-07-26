@@ -42,11 +42,9 @@ class APIService @Inject constructor(
 
         install(WebSockets)
 
-        // AUTOMATIC REACTIVE TOKEN REFRESH ENGINE
         install(Auth) {
             bearer {
                 loadTokens {
-                    // Asynchronously pull current snapshots from DataStore
                     val access = authRepo.access.first()
                     val refresh = authRepo.refresh.first()
 
@@ -58,11 +56,10 @@ class APIService @Inject constructor(
                 refreshTokens {
                     val refreshToken = authRepo.refresh.first() ?: return@refreshTokens null
                     try {
-                        // Request a fresh pair of tokens from your Django backend
                         val response = client.post("$baseURL/token/refresh/") {
                             contentType(ContentType.Application.Json)
                             setBody(mapOf("refresh" to refreshToken))
-                            markAsRefreshTokenRequest() // Prevents infinite loops
+                            markAsRefreshTokenRequest()
                         }
 
                         if (response.status.isSuccess()) {

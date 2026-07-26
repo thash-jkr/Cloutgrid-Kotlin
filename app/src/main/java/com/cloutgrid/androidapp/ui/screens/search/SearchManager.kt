@@ -41,12 +41,15 @@ class SearchManager @Inject constructor(
 
     fun handleSearch(query: String) {
         viewModelScope.launch {
+            isLoading = true
             errorMessage = null
 
             try {
                 searchRepository.handleSearch(query)
             } catch (e: Exception) {
                 errorMessage = e.localizedMessage
+            } finally {
+                isLoading = false
             }
         }
     }

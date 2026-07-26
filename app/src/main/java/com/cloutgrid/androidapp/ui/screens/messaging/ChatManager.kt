@@ -8,16 +8,26 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.cloutgrid.androidapp.data.model.ConversationModel
 import com.cloutgrid.androidapp.data.model.MessageModel
+import com.cloutgrid.androidapp.data.repository.AuthRepository
 import com.cloutgrid.androidapp.data.repository.ChatRepository
+import com.cloutgrid.androidapp.data.repository.SearchRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ChatManager @Inject constructor(
-    private val chatRepository: ChatRepository
+    authRepository: AuthRepository,
+    private val chatRepository: ChatRepository,
+    private val searchRepository: SearchRepository
 ) : ViewModel() {
-    val chats = mutableStateListOf<ConversationModel>()
+    val user = authRepository.user
+    val token = authRepository.access
+
+    val results = searchRepository.results
+
+    val chats = chatRepository.chats
     val messages = mutableStateListOf<MessageModel>()
 
     var isLoading by mutableStateOf(false)
@@ -27,7 +37,7 @@ class ChatManager @Inject constructor(
     var errorMessage by mutableStateOf<String?>(null)
         private set
 
-    var newConversationId by mutableStateOf<String?>(null)
+    var newConversation by mutableStateOf<ConversationModel?>(null)
         private set
 
     init {
@@ -40,8 +50,27 @@ class ChatManager @Inject constructor(
         viewModelScope.launch {
             chatRepository.incomingMessages.collect { incoming ->
                 if (messages.none { it.id == incoming.id }) {
-                    messages.add(incoming)
+                    messages.add(0, incoming)
                 }
+            }
+        }
+    }
+
+    fun clearNewConversation() {
+        newConversation = null
+    }
+
+    fun searchUsers(query: String) {
+        viewModelScope.launch {
+            isLoading = true
+            errorMessage = null
+
+            try {
+                searchRepository.handleSearch(query)
+            } catch (e: Exception) {
+                errorMessage = e.localizedMessage ?: "An error occurred"
+            } finally {
+                isLoading = false
             }
         }
     }
@@ -52,9 +81,7 @@ class ChatManager @Inject constructor(
             errorMessage = null
 
             try {
-                val response = chatRepository.fetchConversations()
-                chats.clear()
-                chats.addAll(response)
+                chatRepository.fetchConversations()
             } catch (e: Exception) {
                 errorMessage = e.localizedMessage ?: "An error occurred"
             } finally {
@@ -69,9 +96,7 @@ class ChatManager @Inject constructor(
             errorMessage = null
 
             try {
-                val response = chatRepository.createConversation(id)
-                chats.add(response)
-                newConversationId = response.id
+                newConversation = chatRepository.createConversation(id)
             } catch (e: Exception) {
                 errorMessage = e.localizedMessage ?: "An error occurred"
             } finally {
@@ -97,9 +122,14 @@ class ChatManager @Inject constructor(
         }
     }
 
-    fun connectWebSocket(conversationId: String, token: String) {
+    fun connectWebSocket(conversationId: String) {
         viewModelScope.launch {
-            chatRepository.connectWebSocket(conversationId, token)
+            val currentToken = token.first()
+            if (currentToken != null) {
+                chatRepository.connectWebSocket(conversationId, currentToken)
+            } else {
+                errorMessage = "Not authenticated"
+            }
         }
     }
 

@@ -1,5 +1,6 @@
 package com.cloutgrid.androidapp.data.repository
 
+import androidx.compose.runtime.mutableStateListOf
 import com.cloutgrid.androidapp.data.model.ConversationModel
 import com.cloutgrid.androidapp.data.model.MessageModel
 import com.cloutgrid.androidapp.data.network.APIService
@@ -9,7 +10,6 @@ import io.ktor.client.plugins.websocket.webSocketSession
 import io.ktor.websocket.Frame
 import io.ktor.websocket.close
 import io.ktor.websocket.readText
-import io.ktor.websocket.send
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -37,21 +37,33 @@ class ChatRepository @Inject constructor(
     private val _socketConnected = MutableSharedFlow<Boolean>(replay = 1, extraBufferCapacity = 1)
     val socketConnected: SharedFlow<Boolean> = _socketConnected.asSharedFlow()
 
-    suspend fun fetchConversations(): List<ConversationModel> {
-        return apiService.request(
+    val chats = mutableStateListOf<ConversationModel>()
+
+    suspend fun fetchConversations() {
+        val response = apiService.request<List<ConversationModel>>(
             endpoint = "/chats/",
             method = "GET",
             requireAuth = true
         )
+
+        chats.clear()
+        chats.addAll(response)
     }
 
     suspend fun createConversation(id: Int): ConversationModel {
-        return apiService.request(
+        val response =  apiService.request<ConversationModel>(
             endpoint = "/chats/$id/",
             method = "POST",
             body = emptyMap<String, String>(),
             requireAuth = true
         )
+
+        val alreadyExists = chats.any { it.id == response.id }
+        if (!alreadyExists) {
+            chats.add(0, response)
+        }
+
+        return response
     }
 
     suspend fun fetchMessages(conversationId: String): List<MessageModel> {

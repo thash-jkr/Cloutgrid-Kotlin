@@ -108,11 +108,11 @@ fun HomeScreen(
                         contentDescription = "Direct Messages",
                         onClick = { onNavigateToChatScreen() }
                     ),
-                    HeaderAction(
-                        icon = Icons.Rounded.SettingsBackupRestore,
-                        contentDescription = "Test",
-                        onClick = { onNavigateToTest() }
-                    ),
+//                    HeaderAction(
+//                        icon = Icons.Rounded.SettingsBackupRestore,
+//                        contentDescription = "Test",
+//                        onClick = { onNavigateToTest() }
+//                    ),
                 )
             )
         }

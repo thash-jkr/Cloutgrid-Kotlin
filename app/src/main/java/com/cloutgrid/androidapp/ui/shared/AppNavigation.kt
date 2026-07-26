@@ -20,6 +20,7 @@ import com.cloutgrid.androidapp.ui.screens.collab.Answers
 import com.cloutgrid.androidapp.ui.screens.collab.CollabCreate
 import com.cloutgrid.androidapp.ui.screens.collab.Questions
 import com.cloutgrid.androidapp.ui.screens.messaging.ChatScreen
+import com.cloutgrid.androidapp.ui.screens.messaging.Messages
 
 @Serializable object TabNavigator
 @Serializable object ChatScreen
@@ -44,6 +45,11 @@ import com.cloutgrid.androidapp.ui.screens.messaging.ChatScreen
 )
 @Serializable data class AnswersRoute(
     val id: Int
+)
+@Serializable data class MessageRoute(
+    val id: String,
+    val username: String,
+    val profilePhoto: String
 )
 
 @Composable
@@ -106,7 +112,16 @@ fun AppNavigation() {
 
         composable<ChatScreen> {
             ChatScreen(
-                onNavigateBack = { navController.popBackStack() }
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToMessages = { id: String, username: String, profilePhoto: String ->
+                    navController.navigate(
+                        MessageRoute(
+                            id,
+                            username,
+                            profilePhoto
+                        )
+                    )
+                }
             )
         }
 
@@ -197,6 +212,17 @@ fun AppNavigation() {
         composable<CreateCollabRoute> {
             CollabCreate(
                 onNavigateBack = { navController.popBackStack() }
+            )
+        }
+
+        composable<MessageRoute> { backStackEntry ->
+            val args = backStackEntry.toRoute<MessageRoute>()
+
+            Messages(
+                id = args.id,
+                onNavigateBack = { navController.popBackStack() },
+                username = args.username,
+                profilePhoto = args.profilePhoto
             )
         }
     }

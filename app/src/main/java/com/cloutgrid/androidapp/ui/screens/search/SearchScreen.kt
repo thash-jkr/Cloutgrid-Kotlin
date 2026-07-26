@@ -107,7 +107,7 @@ fun SearchScreen(
                     columns = GridCells.Fixed(2),
                     contentPadding = PaddingValues(
                         top = innerPadding.calculateTopPadding(),
-                        bottom = scaffoldPadding.calculateBottomPadding(),
+                        bottom = scaffoldPadding.calculateBottomPadding() + innerPadding.calculateBottomPadding(),
                         start = 10.dp,
                         end = 10.dp
                     ),

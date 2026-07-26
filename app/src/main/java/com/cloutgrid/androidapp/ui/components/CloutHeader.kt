@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -116,7 +117,8 @@ fun CloutHeader(
             containerColor = Color.Transparent,
             scrolledContainerColor = Color.Transparent
         ),
-        modifier = Modifier.background(
+        modifier = Modifier
+            .background(
             brush = Brush.verticalGradient(
                 colors = if (title in listOf(
                     "Notifications",

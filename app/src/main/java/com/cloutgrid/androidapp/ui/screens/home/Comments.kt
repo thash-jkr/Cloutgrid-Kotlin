@@ -1,6 +1,7 @@
 package com.cloutgrid.androidapp.ui.screens.home
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -11,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.automirrored.rounded.Send
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material.icons.filled.Warning
@@ -22,12 +24,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import com.cloutgrid.androidapp.R
 import com.cloutgrid.androidapp.data.model.CommentModel
 import com.cloutgrid.androidapp.data.model.UserContainer
 import com.cloutgrid.androidapp.data.network.ApiConfig
@@ -37,7 +41,7 @@ import com.cloutgrid.androidapp.ui.components.ReportBox
 import com.cloutgrid.androidapp.ui.theme.OffWhite
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun Comments(
     comments: List<CommentModel>,
@@ -49,6 +53,8 @@ fun Comments(
     var showReportAlert by remember { mutableStateOf(false) }
     var commentText by remember { mutableStateOf("") }
     var reportContent by remember { mutableStateOf("") }
+
+    val isKeyboardOpen = WindowInsets.isImeVisible
 
     Scaffold(
         containerColor = OffWhite,
@@ -98,22 +104,75 @@ fun Comments(
                     }
                 }
 
-                CommentInputBar(
-                    user = user,
-                    commentText = commentText,
-                    onCommentChange = { commentText = it },
-                    onSendClick = {
-                        if (commentText.isNotBlank()) {
-                            onAddComment(commentText)
-                            commentText = ""
-                        }
-                    },
+                Row(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
-                        .navigationBarsPadding()
-                        .imePadding()
-                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-                )
+                        .padding(
+                            start = 15.dp,
+                            end = 15.dp,
+                            bottom = if (isKeyboardOpen) 15.dp else 0.dp
+                        ),
+                    horizontalArrangement = Arrangement.spacedBy(5.dp),
+                    verticalAlignment = Alignment.Top,
+                ) {
+                    OutlinedTextField(
+                        value = commentText,
+                        onValueChange = { commentText = it },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .navigationBarsPadding()
+                            .imePadding(),
+                        placeholder = {
+                            Text("Write something...")
+                        },
+                        trailingIcon = {
+                            IconButton({
+                                if (commentText.isNotBlank()) {
+                                    onAddComment(commentText)
+                                    commentText = ""
+                                }
+                            }) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Rounded.Send,
+                                    contentDescription = "Send message",
+                                    tint = if (commentText.isNotBlank()) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
+                                )
+                            }
+                        },
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedContainerColor = Color.White,
+                            unfocusedContainerColor = Color.White
+                        ),
+                        maxLines = 5,
+                        leadingIcon = {
+                            AsyncImage(
+                                model = (ApiConfig.current.baseURL + user?.profile?.profilePhoto),
+                                contentDescription = "My Profile Photo",
+                                modifier = Modifier
+                                    .size(30.dp)
+                                    .clip(CircleShape)
+                            )
+                        },
+                        shape = RoundedCornerShape(15.dp)
+                    )
+                }
+
+//                CommentInputBar(
+//                    user = user,
+//                    commentText = commentText,
+//                    onCommentChange = { commentText = it },
+//                    onSendClick = {
+//                        if (commentText.isNotBlank()) {
+//                            onAddComment(commentText)
+//                            commentText = ""
+//                        }
+//                    },
+//                    modifier = Modifier
+//                        .align(Alignment.BottomCenter)
+//                        .navigationBarsPadding()
+//                        .imePadding()
+//                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+//                )
             }
         }
     }
