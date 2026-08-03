@@ -1,12 +1,15 @@
 package com.cloutgrid.androidapp.ui.screens.profile
 
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.EditNote
 import androidx.compose.material.icons.filled.Grid3x3
 import androidx.compose.material.icons.filled.Handshake
 import androidx.compose.material3.Icon
@@ -21,10 +24,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.cloutgrid.androidapp.R
 import com.cloutgrid.androidapp.ui.theme.First
 import com.cloutgrid.androidapp.ui.theme.Second
-import com.cloutgrid.androidapp.R
-import com.cloutgrid.androidapp.ui.theme.OffWhite
 
 @Composable
 fun ProfileSelector(
@@ -52,7 +54,14 @@ fun ProfileSelector(
             verticalAlignment = Alignment.CenterVertically
         ) {
             tabs.forEach { title ->
-                val isSelected = selectedTab == title
+                val isSelected = when (title) {
+                    "Instagram", "YouTube" -> {
+                        false
+                    }
+                    else -> {
+                        selectedTab == title
+                    }
+                }
 
                 Box(
                     modifier = Modifier

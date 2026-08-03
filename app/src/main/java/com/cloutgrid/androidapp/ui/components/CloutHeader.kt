@@ -103,7 +103,9 @@ fun CloutHeader(
                                 )
 
                                 if (idx != action.menuItems.lastIndex) {
-                                    HorizontalDivider()
+                                    HorizontalDivider(
+                                        color = Color.Black.copy(alpha = 0.1f)
+                                    )
                                 }
                             }
                         }

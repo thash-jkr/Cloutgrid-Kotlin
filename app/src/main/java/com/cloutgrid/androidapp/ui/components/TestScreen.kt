@@ -54,11 +54,16 @@ import androidx.compose.material.icons.filled.Work
 import androidx.compose.material.icons.outlined.ArrowCircleRight
 import androidx.compose.material.icons.rounded.ArrowCircleUp
 import androidx.compose.material.icons.rounded.FavoriteBorder
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.FloatingToolbarDefaults.ScreenOffset
 import androidx.compose.material3.FloatingToolbarExitDirection.Companion.Bottom
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -95,6 +100,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
@@ -102,10 +108,14 @@ import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.datasource.LoremIpsum
+import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Popup
 import androidx.compose.ui.zIndex
 import coil3.compose.AsyncImage
 import com.cloutgrid.androidapp.R
@@ -185,6 +195,59 @@ fun TestScreen() {
                 shape = RoundedCornerShape(15.dp)
             )
         }
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .width(200.dp)
+                .height(100.dp)
+                .padding(bottom = 20.dp)
+                .shadow(
+                    elevation = 5.dp,
+                    shape = RoundedCornerShape(20.dp),
+                    ambientColor = Color.Black.copy(alpha = 0.1f),
+                    spotColor = Color.Black.copy(alpha = 0.1f)
+                )
+                .clip(RoundedCornerShape(20.dp))
+                .background(Color.White)
+        ) {
+            Text(
+                text = "10M",
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold
+            )
+
+            Text(
+                text = "Accounts reached",
+                style = MaterialTheme.typography.labelSmall
+            )
+        }
+
+        AlertDialog(
+            onDismissRequest = {  },
+            title = { Text("Disconnect Instagram?") },
+            text = { Text("Are you sure you want to disconnect Instagram?") },
+            confirmButton = {
+                Button({}) {
+                    Text("Disconnect")
+                }
+            },
+            dismissButton = {
+                Button({
+
+                }) {
+                    Text("Cancel")
+                }
+            },
+            containerColor = Color.White,
+            icon = {
+                Icon(
+                    Icons.Rounded.FavoriteBorder,
+                    contentDescription = null
+                )
+            }
+        )
     }
 }
 
@@ -332,7 +395,10 @@ fun ChatRow(
                 content,
                 color = Color.White,
                 modifier = Modifier
-                    .background(color = if (isSender) First else Second, shape = RoundedCornerShape(15.dp))
+                    .background(
+                        color = if (isSender) First else Second,
+                        shape = RoundedCornerShape(15.dp)
+                    )
                     .padding(15.dp, 10.dp)
 
             )

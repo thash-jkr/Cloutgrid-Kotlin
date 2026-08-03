@@ -6,10 +6,8 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import com.cloutgrid.androidapp.ui.shared.AppCoordinator
 import com.cloutgrid.androidapp.ui.theme.CloutgridTheme
 import com.cloutgrid.androidapp.ui.theme.OffWhite
@@ -25,6 +23,8 @@ class MainActivity : ComponentActivity() {
                 darkScrim = 0
             )
         )
+
+        window.isNavigationBarContrastEnforced = false
 
         setContent {
             CloutgridTheme {

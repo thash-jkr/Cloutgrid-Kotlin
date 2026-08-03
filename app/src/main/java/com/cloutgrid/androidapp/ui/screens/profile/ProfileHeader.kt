@@ -115,7 +115,6 @@ fun ProfileHeader(
     }
 }
 
-// --- 3. Sub-Component mapping to your Swift statVStack layout logic ---
 @Composable
 private fun StatItem(
     value: String,

@@ -104,6 +104,18 @@ class AuthRepository @Inject constructor(
         }
     }
 
+    suspend fun setInstagramConnected(connected: Boolean) {
+        val currentUser = _user.value ?: return
+        val updated = currentUser.copy(instagramConnected = connected)
+        saveUser(updated)
+    }
+
+    suspend fun setYoutubeConnected(connected: Boolean) {
+        val currentUser = _user.value ?: return
+        val updated = currentUser.copy(youtubeConnected = connected)
+        saveUser(updated)
+    }
+
     suspend fun login(email: String, password: String, userType: String) {
         val response: LoginResponse = apiService.request(
             endpoint = "/login/$userType/",
